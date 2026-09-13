@@ -4,11 +4,11 @@ An advanced trading journal for recording, reviewing, and analyzing trades with 
 
 ## Preview
 
-![Dashboard](src/assets/images/dashboard.png)
+![Dashboard](dashboard.png)
 
-![Trade List](src/assets/images/list.png)
+![Trade List](list.png)
 
-![Place Trade](src/assets/images/placetrade.png)
+![Place Trade](placetrade.png)
 
 ## Features
 

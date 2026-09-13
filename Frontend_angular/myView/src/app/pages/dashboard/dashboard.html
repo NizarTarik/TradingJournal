@@ -1,0 +1,140 @@
+<div class="dashboard">
+
+  <header class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Overview of your trading system and journal performance</p>
+    </div>
+  </header>
+
+  <section class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-label">Total Trades</span>
+      <strong>{{ totalTrades }}</strong>
+    </div>
+
+    <div class="stat-card">
+      <span class="stat-label">Win Rate</span>
+      <strong>{{ winRate | number:'1.1-1' }}%</strong>
+    </div>
+
+    <div class="stat-card">
+      <span class="stat-label">Profit Factor</span>
+      <strong>{{ profitFactor | number:'1.2-2' }}</strong>
+    </div>
+
+    <div class="stat-card">
+      <span class="stat-label">Total P&L</span>
+      <strong [class.profit]="totalPnl >= 0" [class.loss]="totalPnl < 0">
+        {{ totalPnl >= 0 ? '+' : '' }}{{ totalPnl | currency:'USD':'symbol':'1.2-2' }}
+      </strong>
+    </div>
+  </section>
+
+  <section class="dashboard-grid">
+
+    <div class="card equity-card">
+      <h2>Cumulative P&L Overview</h2>
+      <div class="chart-container" style="position: relative; height: 240px; width: 100%;">
+        @if (totalTrades === 0) {
+        <div class="chart-placeholder">
+          <p class="text-muted">Log trades to populate performance insights</p>
+        </div>
+        } @else {
+        <canvas #equityCanvas></canvas>
+        }
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Recent Journal Entries</h2>
+
+      @if (recentJournalsList.length === 0) {
+      <div class="empty-state">
+        <p>No journal entries yet.</p>
+      </div>
+      } @else {
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Symbol</th>
+              <th>Type</th>
+              <th>P&L</th>
+              <th>Image</th>
+              <th>Charts</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of recentJournalsList; track item.id) {
+            <tr>
+              <td class="text-muted">{{ item.tradeTime | date:'shortDate' }}</td>
+              <td><strong>{{ item.symbol }}</strong></td>
+              <td>
+                <span class="type-pill" [class.long]="item.type === 'LONG'" [class.short]="item.type === 'SHORT'">
+                  {{ item.type }}
+                </span>
+              </td>
+              <td [class.profit]="item.pnl >= 0" [class.loss]="item.pnl < 0">
+                {{ item.pnl >= 0 ? '+' : '' }}{{ item.pnl | currency:'USD':'symbol':'1.2-2' }}
+              </td>
+              <!-- Clean Image Thumbnail Preview -->
+              <td (click)="openImageSlider(item.images)"
+                [style.cursor]="item.images && item.images.length > 0 ? 'pointer' : 'default'">
+                @if (item.images && item.images.length > 0) {
+                <img [src]="item.images[0].url" alt="Trade Thumbnail" class="trade-thumb" title="Click to view charts">
+                } @else {
+                <span class="text-muted">—</span>
+                }
+              </td>
+              <td (click)="openImageSlider(item.images)"
+                [style.cursor]="item.images && item.images.length > 0 ? 'pointer' : 'default'">
+                @if (item.images && item.images.length > 0) {
+                <span class="badge-charts" title="Click to view charts">{{ item.images.length }}</span>
+                } @else {
+                <span class="text-muted">—</span>
+                }
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      }
+    </div>
+
+  </section>
+
+  <!-- Clean Native HTML Image Slider Modal -->
+  @if (showImageSliderModal) {
+  <div class="image-slider-backdrop" (click)="closeImageSlider()">
+    <div class="image-slider-modal" (click)="$event.stopPropagation()">
+      <div class="slider-header">
+        <h3>Trade Chart & Analysis</h3>
+        <button class="btn-close-modal" (click)="closeImageSlider()">✕</button>
+      </div>
+
+      <div class="slider-body">
+        <div class="slider-image-container">
+          <img [src]="activeImages[currentImageIndex].url" alt="Chart screenshot">
+        </div>
+        <p class="slider-description">
+          {{ activeImages[currentImageIndex].description || 'No description provided' }}
+        </p>
+      </div>
+
+      <div class="slider-footer">
+        <button class="btn-slider-nav" [disabled]="currentImageIndex === 0" (click)="prevImage()">
+          Previous
+        </button>
+        <span class="slider-counter">Image {{ currentImageIndex + 1 }} of {{ activeImages.length }}</span>
+        <button class="btn-slider-nav" [disabled]="currentImageIndex === activeImages.length - 1" (click)="nextImage()">
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+  }
+
+</div>

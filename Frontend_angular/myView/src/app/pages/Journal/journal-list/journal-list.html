@@ -1,0 +1,467 @@
+<div class="journal-container">
+
+  <!-- ======================================================
+       JOURNAL LIST
+       ====================================================== -->
+
+  @if (!showNewForm) {
+
+  <div class="journal-list-container">
+
+    <!-- ==================================================
+           HEADER
+           ================================================== -->
+
+    <div class="list-header">
+
+      <div class="list-heading">
+
+        <h2>Trade Archive</h2>
+
+        <p class="subtitle">
+          Review your historical trade logs, P&amp;L, and attached charts.
+        </p>
+
+      </div>
+
+
+      <!-- ==================================================
+             ACTIONS
+             ================================================== -->
+
+      <div class="list-actions">
+
+        <div class="search-box">
+
+          <input type="text" placeholder="Filter by symbol or setup..." [(ngModel)]="searchQuery"
+            (ngModelChange)="applyFilter()" aria-label="Filter trades" />
+
+        </div>
+
+
+        <button class="btn-new-trade" type="button" (click)="openNewJournal()">
+
+          <span class="button-plus">+</span>
+
+          <span>New Trade</span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==================================================
+           TABLE CARD
+           ================================================== -->
+
+    <div class="table-card">
+
+      @if (journalsList.length === 0) {
+
+      <!-- ==================================================
+               EMPTY STATE
+               ================================================== -->
+
+      <div class="empty-state">
+
+        <div class="empty-icon">
+          —
+        </div>
+
+        <p class="text-muted">
+          No journal entries found.
+        </p>
+
+      </div>
+
+      } @else {
+
+      <!-- ==================================================
+               TABLE
+               ================================================== -->
+
+      <div class="table-container">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>Date / Time</th>
+              <th>Symbol</th>
+              <th>Type</th>
+              <th>P&amp;L ($)</th>
+              <th>Charts</th>
+              <th>Setup</th>
+              <th>Confidence</th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            @for (
+            item of paginatedJournals;
+            track item.tradeTime + item.symbol
+            ) {
+
+            <tr>
+
+              <!-- ==================================================
+                         DATE
+                         ================================================== -->
+
+              <td class="text-muted date-cell">
+                {{ item.tradeTime | date:'medium' }}
+              </td>
+
+
+              <!-- ==================================================
+                         SYMBOL
+                         ================================================== -->
+
+              <td class="symbol-cell">
+
+                <strong>
+                  {{ item.symbol }}
+                </strong>
+
+              </td>
+
+
+              <!-- ==================================================
+                         TYPE
+                         ================================================== -->
+
+              <td>
+
+                <span class="type-pill" [class.long]="item.type === 'LONG'" [class.short]="item.type === 'SHORT'">
+                  {{ item.type }}
+                </span>
+
+              </td>
+
+
+              <!-- ==================================================
+                         P&L
+                         ================================================== -->
+
+              <td class="pnl-cell" [class.profit]="item.pnl >= 0" [class.loss]="item.pnl < 0">
+
+                {{ item.pnl >= 0 ? '+' : '' }}{{ item.pnl | currency:'USD':'symbol':'1.2-2' }}
+
+              </td>
+
+
+              <!-- ==================================================
+                         CHARTS
+                         ================================================== -->
+
+              <td class="charts-cell" [class.has-charts]="item.images && item.images.length > 0"
+                (click)="item.images?.length ? openImageSlider(item.images) : null">
+
+                @if (item.images && item.images.length > 0) {
+
+                <div class="charts-trigger">
+
+                  <!-- Chart Badge -->
+
+                  <span class="badge-charts">
+
+                    <span class="chart-icon">
+                      ◫
+                    </span>
+
+                    <span class="chart-count">
+                      {{ item.images.length }}
+                    </span>
+
+                    <span class="chart-label">
+                      {{ item.images.length === 1 ? 'chart' : 'charts' }}
+                    </span>
+
+                  </span>
+
+
+                  <!-- ==================================================
+                               CHART PREVIEW
+                               ================================================== -->
+
+                  <div class="chart-preview" (click)="$event.stopPropagation()">
+
+                    <div class="chart-preview-image">
+
+                      <img [src]="item.images[0].url" alt="Trade chart preview" />
+
+                    </div>
+
+
+                    <div class="chart-preview-info">
+
+                      <div class="chart-preview-title">
+                        Trade Chart
+                      </div>
+
+
+                      <div class="chart-preview-description">
+
+                        {{
+                        item.images[0].description ||
+                        'No description provided'
+                        }}
+
+                      </div>
+
+
+                      @if (item.images.length > 1) {
+
+                      <div class="chart-preview-more">
+
+                        +{{ item.images.length - 1 }}
+                        more chart{{ item.images.length - 1 > 1 ? 's' : '' }}
+
+                      </div>
+
+                      }
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+                } @else {
+
+                <span class="text-muted">
+                  —
+                </span>
+
+                }
+
+              </td>
+
+
+              <!-- ==================================================
+                         SETUP
+                         ================================================== -->
+
+              <td class="setup-cell">
+                {{ item.setup }}
+              </td>
+
+
+              <!-- ==================================================
+                         CONFIDENCE
+                         ================================================== -->
+
+              <td>
+
+                <span class="confidence-tag">
+
+                  <span class="confidence-star">
+                    ★
+                  </span>
+
+                  {{ item.confidence }}/5
+
+                </span>
+
+              </td>
+
+            </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      <!-- ==================================================
+               PAGINATION
+               ================================================== -->
+
+      @if (filteredJournals.length > 0) {
+
+      <div class="pagination-footer">
+
+        <span class="pagination-info">
+
+          Showing
+          {{ (currentPage - 1) * pageSize + 1 }}
+          -
+          {{
+          currentPage * pageSize > filteredJournals.length
+          ? filteredJournals.length
+          : currentPage * pageSize
+          }}
+          of
+          {{ filteredJournals.length }}
+          entries
+
+        </span>
+
+
+        <div class="pagination-controls">
+
+          <button class="btn-pag" type="button" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+            ← Previous
+          </button>
+
+
+          <span class="page-indicator">
+            Page {{ currentPage }} of {{ totalPages }}
+          </span>
+
+
+          <button class="btn-pag" type="button" [disabled]="currentPage === totalPages"
+            (click)="changePage(currentPage + 1)">
+            Next →
+          </button>
+
+        </div>
+
+      </div>
+
+      }
+
+      }
+
+    </div>
+
+  </div>
+
+  }
+
+
+  <!-- ======================================================
+       NEW JOURNAL FORM
+       ====================================================== -->
+
+  @if (showNewForm) {
+
+  <div class="form-wrapper">
+
+    <button class="btn-back" type="button" (click)="showNewForm = false">
+      ← Back to Archive
+    </button>
+
+
+    <app-new-journal></app-new-journal>
+
+  </div>
+
+  }
+
+
+  <!-- ======================================================
+       IMAGE SLIDER MODAL
+       ====================================================== -->
+
+  @if (showImageSliderModal) {
+
+  <div class="image-slider-backdrop" (click)="closeImageSlider()">
+
+    <div class="image-slider-modal" (click)="$event.stopPropagation()">
+
+      <!-- ==================================================
+             MODAL HEADER
+             ================================================== -->
+
+      <div class="slider-header">
+
+        <div>
+
+          <span class="slider-eyebrow">
+            TRADE ANALYSIS
+          </span>
+
+          <h3>
+            Trade Chart &amp; Analysis
+          </h3>
+
+        </div>
+
+
+        <button class="btn-close-modal" type="button" title="Close" aria-label="Close chart viewer"
+          (click)="closeImageSlider()">
+          ✕
+        </button>
+
+      </div>
+
+
+      <!-- ==================================================
+             MODAL BODY
+             ================================================== -->
+
+      <div class="slider-body">
+
+        <div class="slider-image-container">
+
+          <img [src]="activeImages[currentImageIndex].url" alt="Chart screenshot" />
+
+        </div>
+
+
+        <p class="slider-description">
+
+          {{
+          activeImages[currentImageIndex].description ||
+          'No description provided'
+          }}
+
+        </p>
+
+      </div>
+
+
+      <!-- ==================================================
+             MODAL FOOTER
+             ================================================== -->
+
+      <div class="slider-footer">
+
+        <button class="btn-slider-nav" type="button" [disabled]="currentImageIndex === 0" (click)="prevImage()">
+          ← Previous
+        </button>
+
+
+        <span class="slider-counter">
+
+          <span class="counter-current">
+            {{ currentImageIndex + 1 }}
+          </span>
+
+          <span class="counter-separator">
+            /
+          </span>
+
+          <span>
+            {{ activeImages.length }}
+          </span>
+
+        </span>
+
+
+        <button class="btn-slider-nav" type="button" [disabled]="currentImageIndex === activeImages.length - 1"
+          (click)="nextImage()">
+          Next →
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  }
+
+</div>

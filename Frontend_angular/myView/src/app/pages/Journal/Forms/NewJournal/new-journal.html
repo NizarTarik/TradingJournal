@@ -1,0 +1,166 @@
+<div class="journal-container">
+
+  <!-- Page Header -->
+  <div class="journal-header">
+    <div>
+      <h2>Trade Journal</h2>
+      <p class="subtitle">Log, analyze, and track your active execution and psychology.</p>
+    </div>
+  </div>
+
+  <!-- Log Trade Form -->
+  <form [formGroup]="journalForm" (ngSubmit)="onSubmit()" class="journal-form">
+
+    <div class="form-sections-grid">
+
+      <!-- Section 1: Instrument & Type -->
+      <div class="form-card">
+        <h3>1. Instrument & Direction</h3>
+
+        <div class="form-group">
+          <label>Market Symbol</label>
+          <select formControlName="symbol"
+            [class.is-invalid]="journalForm.get('symbol')?.invalid && journalForm.get('symbol')?.touched">
+            <option value="" disabled>Select market...</option>
+            @for (m of markets; track m.symbol) {
+            <option [value]="m.symbol">{{ m.symbol }} — {{ m.name }}</option>
+            }
+          </select>
+          @if (journalForm.get('symbol')?.invalid && journalForm.get('symbol')?.touched) {
+          <span class="error-message">Market symbol is required.</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Trade Type</label>
+          <div class="type-toggle-group">
+            <button type="button" class="btn-type long" [class.active]="journalForm.value.type === 'LONG'"
+              (click)="setTradeType('LONG')">
+              LONG
+            </button>
+            <button type="button" class="btn-type short" [class.active]="journalForm.value.type === 'SHORT'"
+              (click)="setTradeType('SHORT')">
+              SHORT
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Execution Metrics -->
+      <div class="form-card">
+        <h3>2. Execution Metrics</h3>
+
+        <div class="metrics-row">
+          <div class="form-group">
+            <label>Trade Time</label>
+            <input type="datetime-local" formControlName="tradeTime"
+              [class.is-invalid]="journalForm.get('tradeTime')?.invalid && journalForm.get('tradeTime')?.touched">
+            @if (journalForm.get('tradeTime')?.invalid && journalForm.get('tradeTime')?.touched) {
+            <span class="error-message">Trade time is required.</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Profit / Loss ($)</label>
+            <input type="number" step="any" formControlName="pnl" placeholder="0.00"
+              [class.is-invalid]="journalForm.get('pnl')?.invalid && journalForm.get('pnl')?.touched">
+            @if (journalForm.get('pnl')?.invalid && journalForm.get('pnl')?.touched) {
+            <span class="error-message">P&L amount is required.</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Setup & Psychology -->
+      <div class="form-card">
+        <h3>3. Setup & Psychology</h3>
+
+        <div class="form-group">
+          <label>Setup Strategy</label>
+          <select formControlName="setup"
+            [class.is-invalid]="journalForm.get('setup')?.invalid && journalForm.get('setup')?.touched">
+            @for (s of setups; track s) {
+            <option [value]="s">{{ s }}</option>
+            }
+          </select>
+          @if (journalForm.get('setup')?.invalid && journalForm.get('setup')?.touched) {
+          <span class="error-message">Setup strategy is required.</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Setup Confidence</label>
+          <!-- Hidden input bound to reactive forms -->
+          <input type="hidden" formControlName="confidence">
+
+          <div class="star-rating-group">
+            @for (star of [1, 2, 3, 4, 5]; track star) {
+            <button type="button" class="btn-star" [class.active]="journalForm.value.confidence >= star"
+              (click)="setConfidentLevel(star)" title="Rating: {{ star }}">
+              ★
+            </button>
+            }
+            <span class="emotion-label-text">
+              @switch (journalForm.value.confidence) {
+              @case (1) { <span>Low Confidence / Forced Setup</span> }
+              @case (2) { <span>Below Average / Hesitant</span> }
+              @case (3) { <span>Moderate / Standard Setup</span> }
+              @case (4) { <span>High Confidence / Clean Edge</span> }
+              @case (5) { <span>A+ Setup / Textbook Execution</span> }
+              @default { <span class="text-muted">Rate your confidence</span> }
+              }
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Notes & Lessons Learned -->
+    <div class="form-card full-width">
+      <h3>4. Context & Analysis</h3>
+      <div class="form-group">
+        <label>Notes & Lessons Learned</label>
+        <textarea formControlName="notes"
+          placeholder="Why did you take this trade? What went right or wrong?"></textarea>
+      </div>
+    </div>
+
+    <!-- Section 5: Chart Attachments -->
+    <div class="form-card full-width">
+      <div class="image-section-header">
+        <div>
+          <h3>5. Chart Screenshots</h3>
+          <p class="sub-label">Press <strong>Ctrl + V</strong> anywhere on the page to paste screenshots</p>
+        </div>
+        <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" multiple style="display: none">
+        <button type="button" class="btn-upload" (click)="fileInput.click()">📁 Browse PC</button>
+      </div>
+
+      <div class="image-dropzone">
+        @if (attachedImages.length === 0) {
+        <div class="dropzone-placeholder">
+          <span>Drag & drop files or paste screenshots directly</span>
+        </div>
+        } @else {
+        <div class="image-preview-grid">
+          @for (img of attachedImages; track $index; let i = $index) {
+          <div class="image-card">
+            <div class="img-wrapper">
+              <img [src]="img.url" alt="Chart screenshot">
+              <button type="button" class="btn-remove" (click)="removeImage(i)">✕</button>
+            </div>
+            <input type="text" [(ngModel)]="img.description" [name]="'imgDesc_' + i"
+              [ngModelOptions]="{standalone: true}" placeholder="Description (e.g., 4h Structure Break)">
+          </div>
+          }
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-submit">Save Trade Entry</button>
+    </div>
+  </form>
+
+</div>

@@ -1,0 +1,147 @@
+<div class="layout" [class.collapsed]="isSidebarCollapsed">
+
+  <!-- ===================================================== -->
+  <!-- SIDEBAR -->
+  <!-- ===================================================== -->
+
+  <aside class="sidebar">
+
+    <!-- SIDEBAR HEADER -->
+    <div class="sidebar-top">
+
+      <div class="brand">
+        <h1>MY JOURNAL</h1>
+        <span>Trading journal</span>
+      </div>
+
+      <button class="toggle-button" type="button" (click)="toggleSidebar()" title="Toggle Sidebar"
+        aria-label="Toggle Sidebar">
+
+        ☰
+
+      </button>
+
+    </div>
+
+
+    <!-- NAVIGATION -->
+    <nav class="sidebar-nav">
+
+      @for (item of navItems; track item.path) {
+
+      <a [routerLink]="item.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.exact || false }"
+        [title]="item.label">
+
+        <span class="nav-icon">
+          {{ item.icon }}
+        </span>
+
+        <span class="nav-text">
+          {{ item.label }}
+        </span>
+
+      </a>
+
+      }
+
+    </nav>
+
+
+    <!-- SIDEBAR BOTTOM -->
+    <div class="sidebar-bottom">
+
+      <a href="#" title="Settings" aria-label="Settings">
+
+        <span class="nav-icon">⚙</span>
+
+        <span class="nav-text">
+          Settings
+        </span>
+
+      </a>
+
+    </div>
+
+  </aside>
+
+
+  <!-- ===================================================== -->
+  <!-- MAIN APPLICATION -->
+  <!-- ===================================================== -->
+
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+
+      <div class="topbar-left">
+
+        <span class="page-context">
+          Trading Dashboard
+        </span>
+
+      </div>
+
+
+      <div class="topbar-right">
+
+        <!-- ACCOUNT -->
+        <div class="account">
+
+          <span class="account-name">
+            Nizar Tarik
+          </span>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- NOTIFICATIONS -->
+        <!-- ================================================= -->
+
+        <button class="notification-button" type="button" title="Notifications" aria-label="Notifications">
+
+          <svg class="notification-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9">
+            </path>
+
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+
+          </svg>
+
+
+          <!-- Unread notification count -->
+          <span class="notification-badge">
+            3
+          </span>
+
+        </button>
+
+
+        <!-- PROFILE -->
+        <button class="profile-button" type="button" title="Profile" aria-label="Profile">
+
+          N
+
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- ================================================= -->
+    <!-- PAGE CONTENT -->
+    <!-- ================================================= -->
+
+    <main class="content">
+
+      <router-outlet></router-outlet>
+
+    </main>
+
+  </div>
+
+</div>

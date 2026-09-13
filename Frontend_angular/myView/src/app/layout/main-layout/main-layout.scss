@@ -1,0 +1,742 @@
+// ============================================================
+// DASHBOARD THEME
+// ============================================================
+
+$bg-body: #f9fafb;
+$bg-surface: #ffffff;
+$bg-card: #f3f4f6;
+$bg-hover: #e5e7eb;
+
+$border-color: #e5e7eb;
+$border-light: #f3f4f6;
+
+$text-main: #111827;
+$text-muted: #6b7280;
+$text-dim: #9ca3af;
+
+$accent-primary: #111827;
+$accent-hover: #374151;
+$accent-blue: #2563eb;
+
+$profit-color: #059669;
+$loss-color: #4b5563;
+
+$long-color: #059669;
+$short-color: #4b5563;
+
+
+// ============================================================
+// MAIN LAYOUT
+// ============================================================
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: $bg-body;
+  color: $text-main;
+}
+
+
+// ============================================================
+// SIDEBAR
+// ============================================================
+
+.sidebar {
+  width: 250px;
+  min-width: 250px;
+  height: 100vh;
+
+  position: sticky;
+  top: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  background: $bg-surface;
+  border-right: 1px solid $border-color;
+
+  transition:
+    width 0.25s ease,
+    min-width 0.25s ease;
+
+  overflow: hidden;
+}
+
+
+// ============================================================
+// SIDEBAR TOP
+// ============================================================
+
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 76px;
+  padding: 0 1.25rem;
+
+  border-bottom: 1px solid $border-color;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+
+  min-width: 0;
+
+  h1 {
+    margin: 0;
+
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: $text-main;
+    white-space: nowrap;
+  }
+
+  span {
+    font-size: 0.7rem;
+    color: $text-muted;
+    white-space: nowrap;
+  }
+}
+
+
+// ============================================================
+// SIDEBAR TOGGLE
+// ============================================================
+
+.toggle-button {
+  width: 36px;
+  height: 36px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid $border-color;
+  border-radius: 7px;
+
+  background: $bg-surface;
+  color: $text-muted;
+
+  font-size: 1.05rem;
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    background: $bg-hover;
+    color: $text-main;
+    border-color: #d1d5db;
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+}
+
+
+// ============================================================
+// SIDEBAR NAVIGATION
+// ============================================================
+
+.sidebar-nav {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  padding: 1rem 0.75rem;
+
+  overflow-y: auto;
+}
+
+.sidebar-nav a,
+.sidebar-bottom a {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+
+  min-height: 44px;
+  padding: 0 0.85rem;
+
+  border-radius: 7px;
+
+  color: $text-muted;
+  text-decoration: none;
+
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    background: $bg-card;
+    color: $text-main;
+  }
+
+  &.active {
+    background: $bg-card;
+    color: $text-main;
+    font-weight: 600;
+
+    &::before {
+      content: '';
+
+      position: absolute;
+      left: 0;
+      top: 9px;
+      bottom: 9px;
+
+      width: 3px;
+
+      background: $accent-primary;
+      border-radius: 0 3px 3px 0;
+    }
+  }
+}
+
+.nav-icon {
+  width: 22px;
+  min-width: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 1rem;
+}
+
+.nav-text {
+  white-space: nowrap;
+}
+
+
+// ============================================================
+// SIDEBAR BOTTOM
+// ============================================================
+
+.sidebar-bottom {
+  padding: 0.75rem;
+
+  border-top: 1px solid $border-color;
+}
+
+
+// ============================================================
+// COLLAPSED SIDEBAR
+// ============================================================
+
+.layout.collapsed {
+
+  .sidebar {
+    width: 72px;
+    min-width: 72px;
+  }
+
+  .sidebar-top {
+    padding: 0 0.9rem;
+    justify-content: center;
+  }
+
+  .brand {
+    display: none;
+  }
+
+  .sidebar-nav a,
+  .sidebar-bottom a {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .nav-text {
+    display: none;
+  }
+
+  .sidebar-nav a.active::before {
+    left: 0;
+  }
+}
+
+
+// ============================================================
+// MAIN AREA
+// ============================================================
+
+.main {
+  flex: 1;
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+
+// ============================================================
+// TOPBAR
+// ============================================================
+
+.topbar {
+  height: 76px;
+  min-height: 76px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 2rem;
+
+  background: $bg-surface;
+  border-bottom: 1px solid $border-color;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.page-context {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $text-main;
+}
+
+
+// ============================================================
+// TOPBAR RIGHT
+// ============================================================
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+
+// ============================================================
+// ACCOUNT
+// ============================================================
+
+.account {
+  display: flex;
+  align-items: center;
+}
+
+.account-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: $text-muted;
+}
+
+
+// ============================================================
+// NOTIFICATION BUTTON
+// ============================================================
+
+.notification-button {
+  position: relative;
+
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid $border-color;
+  border-radius: 8px;
+
+  background: $bg-surface;
+  color: $text-muted;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    background: $bg-card;
+    color: $text-main;
+    border-color: #d1d5db;
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-blue;
+    outline-offset: 2px;
+  }
+}
+
+.notification-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+
+// ============================================================
+// NOTIFICATION BADGE
+// ============================================================
+
+.notification-badge {
+  position: absolute;
+
+  top: -4px;
+  right: -4px;
+
+  min-width: 17px;
+  height: 17px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 4px;
+
+  border: 2px solid $bg-surface;
+  border-radius: 999px;
+
+  background: #dc2626;
+  color: #ffffff;
+
+  font-size: 0.6rem;
+  font-weight: 700;
+  line-height: 1;
+
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+}
+
+
+// ============================================================
+// PROFILE BUTTON
+// ============================================================
+
+.profile-button {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid $border-color;
+  border-radius: 50%;
+
+  background: $text-main;
+  color: #ffffff;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+
+  &:hover {
+    background: $accent-hover;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+}
+
+
+// ============================================================
+// PAGE CONTENT
+// ============================================================
+
+.content {
+  flex: 1;
+  min-width: 0;
+
+  padding: 2rem;
+}
+
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  padding: 2rem;
+
+  background-color: $bg-body;
+  color: $text-main;
+
+  min-height: 100vh;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h1 {
+      margin: 0;
+
+      font-size: 1.75rem;
+      font-weight: 600;
+
+      color: $text-main;
+    }
+
+    p {
+      margin: 0.25rem 0 0;
+
+      color: $text-muted;
+      font-size: 0.9rem;
+    }
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    padding: 1.25rem 1.5rem;
+
+    background: $bg-surface;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    .stat-label {
+      color: $text-muted;
+
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    strong {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: $text-main;
+
+      &.profit {
+        color: $profit-color;
+      }
+
+      &.loss {
+        color: $loss-color;
+      }
+    }
+  }
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    padding: 1.5rem;
+
+    background: $bg-surface;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    h2 {
+      margin: 0;
+
+      font-size: 1.1rem;
+      font-weight: 600;
+
+      color: $text-main;
+    }
+
+    .chart-placeholder {
+      height: 250px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border: 2px dashed $border-color;
+      border-radius: 6px;
+
+      background: $bg-card;
+      color: $text-muted;
+    }
+
+    .empty-state {
+      padding: 3rem 0;
+
+      text-align: center;
+      color: $text-muted;
+    }
+
+    .table-container {
+      overflow-x: auto;
+
+      table {
+        width: 100%;
+
+        border-collapse: collapse;
+
+        text-align: left;
+        font-size: 0.9rem;
+
+        th {
+          padding: 0.75rem 0.5rem;
+
+          color: $text-muted;
+          font-weight: 500;
+
+          border-bottom: 1px solid $border-color;
+        }
+
+        td {
+          padding: 0.75rem 0.5rem;
+
+          color: $text-main;
+
+          border-bottom: 1px solid $border-light;
+
+          white-space: nowrap;
+
+          &.text-muted {
+            color: $text-muted;
+          }
+        }
+
+        .type-pill {
+          padding: 0.2rem 0.5rem;
+
+          border-radius: 4px;
+
+          font-size: 0.75rem;
+          font-weight: 600;
+
+          &.long {
+            background: rgba($long-color, 0.1);
+            color: $long-color;
+          }
+
+          &.short {
+            background: rgba($short-color, 0.1);
+            color: $short-color;
+          }
+        }
+
+        .profit {
+          color: $profit-color;
+          font-weight: 600;
+        }
+
+        .loss {
+          color: $loss-color;
+          font-weight: 600;
+        }
+
+        .badge-charts {
+          padding: 0.2rem 0.5rem;
+
+          border-radius: 4px;
+
+          background: rgba($accent-blue, 0.1);
+          color: $accent-blue;
+
+          font-size: 0.75rem;
+          font-weight: 600;
+
+          &:hover {
+            background: rgba($accent-blue, 0.2);
+          }
+        }
+      }
+    }
+  }
+}
+
+
+// ============================================================
+// RESPONSIVE
+// ============================================================
+
+@media (max-width: 768px) {
+
+  .sidebar {
+    width: 72px;
+    min-width: 72px;
+  }
+
+  .sidebar-top {
+    padding: 0 0.9rem;
+    justify-content: center;
+  }
+
+  .brand {
+    display: none;
+  }
+
+  .sidebar-nav a,
+  .sidebar-bottom a {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .nav-text {
+    display: none;
+  }
+
+  .topbar {
+    padding: 0 1rem;
+  }
+
+  .account {
+    display: none;
+  }
+
+  .content {
+    padding: 1rem;
+  }
+
+  .dashboard {
+    padding: 1rem;
+  }
+}
